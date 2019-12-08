@@ -1,27 +1,32 @@
 #include "KeyEmulator.h"
 
-KeyEmulator::KeyEmulator() {
-    sys = DetectSystem();
-    enable = true;
-}
+// Check for which system
+#if defined(__WIN32) || defined(__WIN64)
+#define WIN_SYS
+#elif defined(__linux__) || defined(__linux) || defined(linux)
+#define LINUX_SYS
+#endif
 
-KeyEmulator::SYSTEM KeyEmulator::DetectSystem() {
-    char* path = getenv("PATH");
-    std::smatch m;
-    std::string s(path);
-    std::regex e("/usr/bin");
-    std::regex_search(s, m, e);
-    if (!m.empty()) {
-        std::cout << "linux" << std::endl;
-    } else {
-        std::cout << "unknown" << std::endl;
-    }
-    std::cout << path << std::endl;
+KeyEmulator::KeyEmulator() {
+    enable = true;
 }
 
 void KeyEmulator::Enable(bool enable) {
     this->enable = enable;
 }
+
+#ifdef WIN_SYS
+void KeyEmulator::Run() {
+
+}
+#endif
+
+#ifdef LINUX_SYS
+void KeyEmulator::Run() {
+
+}
+#endif
+
 
 KeyEmulator::~KeyEmulator() {
 }

@@ -9,27 +9,17 @@ class KeyEmulator {
 
     /* Variables */
     private:
-    // System type
-    enum SYSTEM {
-        WIN,
-        POSIX,
-        OTHER
-    };
-    SYSTEM sys;
     // Enabled / Disabled
     bool enable;
     
-    /* Functions */
-
-    private:
-    // Detect current system
-    SYSTEM DetectSystem();
-     
+    /* Functions */  
     public:
     // CTOR
     KeyEmulator();
     // Enable
     void Enable(bool enable);
+    // Run emulator
+    void Run();
     // DTOR
     ~KeyEmulator();
 };

@@ -1,8 +1,8 @@
 
+#define SFML_STATIC
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "KeyEmulator.h"
-
 int main() {
     KeyEmulator keyEm;
    
