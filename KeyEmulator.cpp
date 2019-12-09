@@ -29,9 +29,7 @@ void KeyEmulator::Enable(bool enable) {
 
 int KeyEmulator::Translate(int vkCode) {
   int c = (int)MapVirtualKey(vkCode, 2);
-  switch (c) {
-    case
-  }
+  
 }
 
 KeyEmulator::~KeyEmulator() {
