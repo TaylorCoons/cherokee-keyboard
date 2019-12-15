@@ -1,19 +1,23 @@
 #include "KeyEmulator.h"
 
 LRESULT __stdcall HookCallbackKeyboard(int nCode, WPARAM wParam, LPARAM lParam) {
-  if (nCode >= 0) {
+  if (nCode >= 0 && wParam == WM_KEYDOWN) {
     KBDLLHOOKSTRUCT kbdStruct;
     kbdStruct = *((KBDLLHOOKSTRUCT*)lParam);
-    if(wParam == WM_KEYDOWN) {
-      int chChar = KeyEmulator::Translate(kbdStruct.vkCode);
-      if (chChar) {
-        PostMessageW(HWND_BROADCAST, WM_CHAR, 0x13A1, 1L);
-        return -1;
-      }
+    BYTE keyboardState[256];
+    GetKeyboardState(keyboardState);
+    WORD wChar = 0;
+    int ch = ToAscii((UINT)kbdStruct.vkCode, kbdStruct.scanCode, keyboardState, &wChar, 0);
+    ch = ToAscii((UINT)kbdStruct.vkCode, kbdStruct.scanCode, keyboardState, &wChar, 0);
+    bool success = KeyEmulator::Translate((char)wChar);
+    if (success) {
+      return -1;
     }
   }
   return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
+
+std::map<char, std::vector<unsigned long int>> KeyEmulator::keyMap;
 
 KeyEmulator::KeyEmulator() {
   enable = true;
@@ -65,11 +69,6 @@ void KeyEmulator::LoadKeyMap(std::string filePath) {
         }
       }
     }
-    std::cout << ch << ": ";
-    for (int j = 0; j < hexChars.size(); j++) {
-      std::cout << hexChars.at(j) << ", ";
-    }
-    std::cout << std::endl;
     keyMap[ch] = hexChars;
     lineNum++;
   }
@@ -79,8 +78,16 @@ void KeyEmulator::Enable(bool enable) {
   this->enable = enable;
 }
 
-int KeyEmulator::Translate(int vkCode) {
-  int c = (int)MapVirtualKey(vkCode, 2);
+bool KeyEmulator::Translate(char c) {
+  //std::cout << "char: " << c << std::endl;
+  if (keyMap.count(c)) {
+    for (unsigned int i = 0; i < keyMap.at(c).size(); i++) {
+      PostMessageW(HWND_BROADCAST, WM_CHAR, keyMap.at(c).at(i), 1L);
+    }
+    return true;
+  } else {
+    return false;
+  }
 
 }
 
