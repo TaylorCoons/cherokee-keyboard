@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string>
 #include <Windows.h>
+#include <fstream>
+#include <map>
+#include <vector>
 
 class KeyEmulator {
   /* Variables */
@@ -12,7 +15,13 @@ class KeyEmulator {
   // Enabled / Disabled
   bool enable;
   HHOOK kbHook;
+  std::map<char, std::vector<unsigned long int>> keyMap;
+
   /* Functions */
+  private:
+  // Loads key map used for translation
+  void LoadKeyMap(std::string filePath);
+
   public:
   // CTOR
   KeyEmulator();
